@@ -22,6 +22,15 @@ struct Time
         fix_time();
     }
 
+    Time operator+ (const Time& other) const
+    {
+	return (h + other.h, m + other.m, s + other.s);
+    }
+
+    Time operator- (const Time& other) const
+    {
+    }
+
     void time_of_day()
     {
         if (0 <= h && h < 6)
@@ -86,10 +95,15 @@ struct Time
 int main()
 {
     Time clock;
+    Time x;
+    Time y;
     clock.set_time(23, 59, 59);
     clock.print();
     clock.next_minute();
     clock.time_to_midnight();
     clock.print();
+    x.set_time(6, 0, 0);
+    y.set_time(7, 0, 0);
+    std::cout << x + y << '\n';
     return 0;
 }
