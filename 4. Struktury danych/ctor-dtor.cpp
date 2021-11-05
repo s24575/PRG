@@ -4,18 +4,15 @@
 struct ctor
 {
     std::string string;
-    ctor() 
-    {
-        string = "string";
-    }
+    ctor(std::string a) { string = a; }
     ~ctor()
     {
-        std::cout << string << '\n' << "DESTRUCTION!\n";
+        std::cout << string << ' ' << "DESTRUCTION!\n";
     }
 };
 
 int main()
 {
-    ctor abc;
+    ctor test = ctor("something");
     return 0;
 }

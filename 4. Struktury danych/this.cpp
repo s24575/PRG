@@ -12,6 +12,6 @@ int main()
 {
     This a;
     a.pointer();
-    cout << a& << '\n';
+    std::cout << a& << '\n';
     return 0;
 }
