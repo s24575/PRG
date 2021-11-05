@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <iomanip>
+#include <sstream>
 #define fill std::setw(2) << std::setfill('0') <<
 
 struct Time
@@ -8,6 +9,8 @@ struct Time
     int s{};
     int m{};
     int h{};
+
+    Time(int a, int b, int c) { h = a; m = b; s = c; }
 
     void next_second() {
         s++;
@@ -22,13 +25,88 @@ struct Time
         fix_time();
     }
 
+    Time Add(const Time& other) const
+    {
+        return Time(h + other.h, m + other.m, s + other.s);
+    }
+
     Time operator+ (const Time& other) const
     {
-	return (h + other.h, m + other.m, s + other.s);
+        return Add(other);
+    }
+
+    Time Subtract(const Time& other) const
+    {
+        return Time(h - other.h, m - other.m, s - other.s);
     }
 
     Time operator- (const Time& other) const
     {
+        return Subtract(other);
+    }
+
+    bool Smaller_than(const Time& other) const
+    {
+        if (h < other.h)
+            return true;
+        if (h > other.h)
+            return false;
+        if (m < other.m)
+                return true;
+        if (m > other.m)
+            return false;
+        if (s < other.s)
+                return true;
+        if (s > other.s)
+            return false;
+        else
+            return false;
+    }
+
+    bool operator< (const Time& other) const
+    {
+        return Smaller_than(other);
+    }
+
+    bool Bigger_than(const Time& other) const
+    {
+        if (h < other.h)
+            return false;
+        if (h > other.h)
+            return true;
+        if (m < other.m)
+            return false;
+        if (m > other.m)
+            return true;
+        if (s < other.s)
+            return false;
+        if (s > other.s)
+            return true;
+        else
+            return false;
+    }
+
+    bool operator> (const Time& other) const
+    {
+        return Bigger_than(other);
+    }
+
+    bool Equal(const Time& other) const
+    {
+        if (h == other.h)
+        {
+            if (m == other.m)
+            {
+                if (s == other.s)
+                    return true;
+            }
+        }
+        return false;
+    }
+
+    bool operator== (const Time& other) const
+    {
+        return Equal(other);
     }
 
     void time_of_day()
@@ -43,67 +121,120 @@ struct Time
             std::cout << "evening" << '\n';
     }
 
-    void count_seconds()
+    int count_seconds()
     {
         int x = 3600 * h + 60 * m + s;
-        std::cout << x << '\n';
-    }
-    
-    void count_minutes()
-    {
-        int x = 60 * h + m;
-        std::cout << x << '\n';
+        return(x);
     }
 
-    void time_to_midnight()
+    int count_minutes()
+    {
+        int x = 60 * h + m;
+        return(x);
+    }
+
+    Time time_to_midnight()
     {
         s = 60 - s;
         m = 59 - m;
         h = 23 - h;
-    }
-
-    void set_time(int a, int b, int c)
-    {
-        h = a;
-        m = b;
-        s = c;
+        return(Time(h, m, s));
     }
 
     void fix_time()
     {
-        if (s >= 60)
+        while (s >= 60)
         {
-            s = s - 60;
+            s -= 60;
             m++;
         }
-        if (m >= 60)
+        while (s < 0)
         {
-            m = m - 60;
+            s += 60;
+            m--;
+        }
+        while (m >= 60)
+        {
+            m -= 60;
             h++;
         }
-        if (h >= 24)
-            h = h - 24;
+        while (m < 0)
+        {
+            m += 60;
+            h--;
+        }
+        while (h >= 24)
+            h -= 24;
+        while (h < 0)
+            h += 24;
     }
 
-    void print()
+    std::string to_string()
     {
         fix_time();
-        std::cout << fill h << ':' << fill m << ':' << fill s << '\n';
+        std::stringstream string;
+        string << fill h << ':' << fill m << ':' << fill s;
+        return(string.str());
     }
 };
 
 int main()
 {
-    Time clock;
-    Time x;
-    Time y;
-    clock.set_time(23, 59, 59);
-    clock.print();
-    clock.next_minute();
-    clock.time_to_midnight();
-    clock.print();
-    x.set_time(6, 0, 0);
-    y.set_time(7, 0, 0);
-    std::cout << x + y << '\n';
+    Time time = Time{ 23, 59, 59 };
+    std::cout << time.to_string() << '\n';
+
+    Time time1 = Time{ 23, 59, 59 };
+    time1.next_hour();
+    std::cout << time1.to_string() << '\n';
+
+    Time time2 = Time{ 23, 59, 59 };
+    time2.next_minute();
+    std::cout << time2.to_string() << '\n';
+
+    Time time3 = Time{ 23, 59, 59 };
+    time3.next_second();
+    std::cout << time3.to_string() << '\n';
+
+    Time time4 = Time{ 23, 59, 59 };
+    time4.time_of_day();
+
+    Time a = Time{ 23, 59, 59 };
+    Time b = Time{ 0,  0,  1 };
+    Time c = a + b;
+    std::cout << c.to_string() << '\n';
+
+    Time a1 = Time{ 3, 59, 59 };
+    Time b1 = Time{ 4,  0,  0 };
+    Time c1 = a1 - b1;
+    std::cout << c1.to_string() << '\n';
+
+    Time a2 = Time{ 23, 59, 59 };
+    Time b2 = Time{ 0,  0,  1 };
+    if (a2 > b2) {
+        std::cout << a2.to_string() << " > " << b2.to_string() << "\n";
+    }
+    else {
+        std::cout << a2.to_string() << " ? " << b2.to_string() << "\n";;
+    }
+
+    Time a3 = Time{ 23, 59, 59 };
+    Time b3 = Time{ 0,  0,  1 };
+    if (a3 == b3) {
+        std::cout << a3.to_string() << " == " << b3.to_string() << "\n";;
+    }
+    else {
+        std::cout << a3.to_string() << " != " << b3.to_string() << "\n";
+    }
+
+    Time time5 = Time{ 23, 59, 59 };
+    time5.count_seconds();
+
+    Time time6 = Time{ 23, 59, 59 };
+    time6.count_minutes();
+
+    Time time7 = Time{ 23, 59, 59 };
+    time7.time_to_midnight();
+    std::cout << time7.to_string() << '\n';
+    
     return 0;
 }
