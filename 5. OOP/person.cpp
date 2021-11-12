@@ -6,75 +6,116 @@ struct Person
 {
     std::string name;
     std::string surname;
-    Person(std::string n, std::string s) { name = n; surname = s; }
 
-    virtual std::string to_string(std::string x) = 0;
-    {
-	std::stringstream ss;
-	ss << name << ' ' << surname;
-        return(ss.str());
-    }
+    Person(std::string n, std::string s) : name(n), surname(s) {}
 
-    std::string who_is_it(Person const&)
-    {
-        std::cout << Person.to_string() << '\n';
-    }
+    virtual std::string to_string() = 0;
+
+    std::string who_is_it(Person& x) { return x.to_string(); }
 };
 
-struct Mr : Person {};
+struct Mr : Person
 {
-    std::string to_string(std::string x) override;
+    using Person::Person;
+
+    std::string to_string() override
     {
-	std::stringstream ss;
-	ss << "Mr" << name << ' ' << surname;
+        std::stringstream ss;
+        ss << "Mr " << name << ' ' << surname;
         return(ss.str());
     }
 };
 
-struct Mrs : Person {};
+struct Mrs : Person
 {
-    std::string to_string(std::string x) override;
+    using Person::Person;
+
+    std::string to_string() override
     {
-	std::stringstream ss;
-	ss << "Mrs" << name << ' ' << surname;
+        std::stringstream ss;
+        ss << "Mrs " << name << ' ' << surname;
         return(ss.str());
     }
 };
 
-struct King : Person {};
+struct King : Person
 {
-    std::string to_string(std::string x) override;
+    using Person::Person;
+
+    std::string to_string() override
     {
-	std::stringstream ss;
-	ss << "King" << name << ' ' << surname;
+        std::stringstream ss;
+        ss << "King " << name << ' ' << surname;
         return(ss.str());
     }
 };
 
-struct Queen : Person {};
+struct Queen : Person
 {
-    std::string to_string(std::string x) override;
+    using Person::Person;
+
+    std::string to_string() override
     {
-	std::stringstream ss;
-	ss << "Queen" << name << ' ' << surname;
+        std::stringstream ss;
+        ss << "Queen " << name << ' ' << surname;
+        return(ss.str());
+    }
+};
+
+struct Greeting
+{
+    virtual std::string greet(Person&) = 0;
+};
+
+struct Hello : Greeting
+{
+    std::string greet(Person& x) override
+    {
+        std::stringstream ss;
+        ss << "Hello, " << x.to_string() << '\n';
+        return(ss.str());
+    }
+};
+
+struct Good_evening : Greeting
+{
+    std::string greet(Person& x) override
+    {
+        std::stringstream ss;
+        ss << "Good evening, " << x.to_string() << '\n';
+        return(ss.str());
+    }
+};
+
+struct Farewell : Greeting
+{
+    std::string greet(Person& x) override
+    {
+        std::stringstream ss;
+        ss << "Farewell, " << x.to_string() << '\n';
         return(ss.str());
     }
 };
 
 int main()
 {
-    King Mieszko = King("Mieszko", "II");
-    Mieszko.to_string();
+    King Mieszko("Mieszko", "II");
+    std::cout << Mieszko.to_string() << '\n';
+    Queen Elizabeth("Elizabeth", "II");
+    std::cout << Elizabeth.to_string() << '\n';
+    Mr Bean("Rowan", "Atkinson");
+    std::cout << Bean.to_string() << '\n';
+    Mrs Popular("Mary", "Smith");
+    std::cout << Popular.to_string() << "\n\n";
+
+    std::cout << Mieszko.who_is_it(Mieszko) << "\n\n"; // but why?
+
+    Hello hi;
+    Good_evening goodbye;
+    Farewell bye;
+
+    std::cout << hi.greet(Mieszko);
+    std::cout << goodbye.greet(Elizabeth);
+    std::cout << bye.greet(Bean);
     return 0;
 }
-
-//struct Person
-//virtual std::string to_string(std::string x) = 0;
-//Person(std::string n, std::string s) { name = n; surname = s; }
-//types? Mr, Mrs, King, Queen -> override function to_string()
-//to_string() return(type, name, surname)
-//who_is_it() std::cout << someone.to_string() << '\n'
-
-//        std::stringstream ss;
-//        ss << n << ' ' << s;
-//        std::string name = ss.str();

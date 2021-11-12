@@ -4,7 +4,8 @@ struct This
 {
     void pointer()
     {
-        std::cout << this* << '\n';
+        This* e = this;
+        std::cout << e << '\n';
     }
 };
 
@@ -12,6 +13,6 @@ int main()
 {
     This a;
     a.pointer();
-    std::cout << a& << '\n';
+    std::cout << &a << '\n';
     return 0;
 }
